@@ -1,7 +1,5 @@
 version: '3' # 設定ファイルの文法のバージョン３を利用する。
-
 services:
-
   # 1. phpモジュールを搭載したapacheをインストールするコンテナ。
   php:
     build: ./php # phpディレクトリのDockerfileに基づいてコンテナ作成
@@ -10,11 +8,10 @@ services:
     ports:
       - 8080:80 # ホストの8080番ポートをコンテナの80番ポートにフォワード（転送）
     depends_on:
-      - mysql
-
-  # 2. mysqlをインストールするコンテナ
-  mysql:
-    image: mysql:5.7 # mysql5.7のイメージをそのまま利用。
+      - mariadb
+  # 2. mariadbをインストールするコンテナ
+  mariadb:
+    image: mariadb # mariadbのイメージをそのまま利用。
     # mysqlの起動時に文字コードを指定
     command: mysqld --character-set-server=utf8 --collation-server=utf8_general_ci --innodb-use-native-aio=0
     volumes:
@@ -25,14 +22,13 @@ services:
       - MYSQL_USER=testuser # デフォルトで作成するDBユーザー名を設定
       - MYSQL_PASSWORD=password # デフォルトで作成するDBユーザーのパスワードを設定
       - "TZ=Asia/Tokyo" # タイムゾーンを設定
-
   # 3. phpmyadminをインストールするコンテナ
   phpmyadmin:
     image: phpmyadmin/phpmyadmin # phpmyadminのコンテナイメージをそのまま利用
     environment:
-      - PMA_HOST=mysql # 上記で作成したmysqlコンテナに接続
+      - PMA_HOST=mariadb # 上記で作成したmariadbコンテナに接続
     depends_on:
-      - mysql # 上記で作成したmysqlコンテナとリンクする
+      - mariadb # 上記で作成したmariadbコンテナとリンクする
     ports:
       - 8888:80 # ホストの8888番ポートをphpmyadminコンテナの80番ポートに転送
     volumes:
