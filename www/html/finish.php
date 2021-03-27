@@ -7,15 +7,18 @@ require_once MODEL_PATH . 'cart.php';
 
 session_start();
 
+// ログインできていなければリダイレクト
 if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
-
+// DB接続、ユーザidからデータ取得
 $db = get_db_connect();
 $user = get_login_user($db);
 
+// カート情報取得
 $carts = get_user_carts($db, $user['user_id']);
 
+// 購入処理
 if(purchase_carts($db, $carts) === false){
   set_error('商品が購入できませんでした。');
   redirect_to(CART_URL);

@@ -16,6 +16,7 @@ function get_db_connect(){
   return $dbh;
 }
 
+// 渡されたDSNとsql文をもとにdbからデータ取得
 function fetch_query($db, $sql, $params = array()){
   try{
     $statement = $db->prepare($sql);
@@ -27,6 +28,7 @@ function fetch_query($db, $sql, $params = array()){
   return false;
 }
 
+// 渡されたDSNとsql文をもとにdbからデータを全て取得
 function fetch_all_query($db, $sql, $params = array()){
   try{
     $statement = $db->prepare($sql);
@@ -38,6 +40,7 @@ function fetch_all_query($db, $sql, $params = array()){
   return false;
 }
 
+// ？？
 function execute_query($db, $sql, $params = array()){
   try{
     $statement = $db->prepare($sql);

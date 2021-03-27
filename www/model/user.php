@@ -2,6 +2,7 @@
 require_once MODEL_PATH . 'functions.php';
 require_once MODEL_PATH . 'db.php';
 
+// ユーザ情報の取得（idから）
 function get_user($db, $user_id){
   $sql = "
     SELECT
@@ -19,6 +20,7 @@ function get_user($db, $user_id){
   return fetch_query($db, $sql);
 }
 
+// ユーザ情報の取得（名前から）
 function get_user_by_name($db, $name){
   $sql = "
     SELECT
@@ -36,8 +38,11 @@ function get_user_by_name($db, $name){
   return fetch_query($db, $sql);
 }
 
+// ログイン
 function login_as($db, $name, $password){
   $user = get_user_by_name($db, $name);
+
+  // DB登録のパスワードと入力されたパスワードが異なっていればfalseを返す
   if($user === false || $user['password'] !== $password){
     return false;
   }
@@ -45,12 +50,14 @@ function login_as($db, $name, $password){
   return $user;
 }
 
+// セッションを経由してユーザ情報を返す
 function get_login_user($db){
   $login_user_id = get_session('user_id');
 
   return get_user($db, $login_user_id);
 }
 
+// 入力情報の形式を確認し、正しければユーザ登録処理に渡す
 function regist_user($db, $name, $password, $password_confirmation) {
   if( is_valid_user($name, $password, $password_confirmation) === false){
     return false;
@@ -59,17 +66,21 @@ function regist_user($db, $name, $password, $password_confirmation) {
   return insert_user($db, $name, $password);
 }
 
+// ??
 function is_admin($user){
   return $user['type'] === USER_TYPE_ADMIN;
 }
+
 
 function is_valid_user($name, $password, $password_confirmation){
   // 短絡評価を避けるため一旦代入。
   $is_valid_user_name = is_valid_user_name($name);
   $is_valid_password = is_valid_password($password, $password_confirmation);
   return $is_valid_user_name && $is_valid_password ;
+  // ??
 }
 
+// ユーザ名とパスワードの形式確認
 function is_valid_user_name($name) {
   $is_valid = true;
   if(is_valid_length($name, USER_NAME_LENGTH_MIN, USER_NAME_LENGTH_MAX) === false){

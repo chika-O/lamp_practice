@@ -6,21 +6,26 @@ require_once MODEL_PATH . 'item.php';
 
 session_start();
 
+// ログインできていなければログインページへリダイレクト
 if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
 
+// DB接続
 $db = get_db_connect();
 
+// ユーザ情報取得
 $user = get_login_user($db);
 
+// ▲
 if(is_admin($user) === false){
   redirect_to(LOGIN_URL);
 }
 
+// item_idをdbから取得
 $item_id = get_post('item_id');
 
-
+// 商品削除
 if(destroy_item($db, $item_id) === true){
   set_message('商品を削除しました。');
 } else {

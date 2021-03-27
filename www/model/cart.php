@@ -1,7 +1,9 @@
 <?php 
+// ファイル読み込み
 require_once MODEL_PATH . 'functions.php';
 require_once MODEL_PATH . 'db.php';
 
+// cartsテーブルとitemsテーブルを結合し、fetchする
 function get_user_carts($db, $user_id){
   $sql = "
     SELECT
@@ -23,9 +25,11 @@ function get_user_carts($db, $user_id){
     WHERE
       carts.user_id = {$user_id}
   ";
+  // ここに引数を渡して取得
   return fetch_all_query($db, $sql);
 }
 
+// cartsテーブルとitemsテーブルを結合、ユーザidとアイテムidが一致する商品情報を取得
 function get_user_cart($db, $user_id, $item_id){
   $sql = "
     SELECT
@@ -54,6 +58,7 @@ function get_user_cart($db, $user_id, $item_id){
 
 }
 
+// カートに商品があれば更新、なければ追加
 function add_cart($db, $user_id, $item_id ) {
   $cart = get_user_cart($db, $user_id, $item_id);
   if($cart === false){
@@ -62,6 +67,7 @@ function add_cart($db, $user_id, $item_id ) {
   return update_cart_amount($db, $cart['cart_id'], $cart['amount'] + 1);
 }
 
+// 指定されたIDをもとにカートに挿入
 function insert_cart($db, $user_id, $item_id, $amount = 1){
   $sql = "
     INSERT INTO
@@ -73,9 +79,11 @@ function insert_cart($db, $user_id, $item_id, $amount = 1){
     VALUES({$item_id}, {$user_id}, {$amount})
   ";
 
+  // sqlの実行
   return execute_query($db, $sql);
 }
 
+// カート内容の更新
 function update_cart_amount($db, $cart_id, $amount){
   $sql = "
     UPDATE
@@ -84,11 +92,14 @@ function update_cart_amount($db, $cart_id, $amount){
       amount = {$amount}
     WHERE
       cart_id = {$cart_id}
+  // 最大で一行のデータに対して
     LIMIT 1
   ";
+  // sql実行
   return execute_query($db, $sql);
 }
 
+// カートの中身を削除
 function delete_cart($db, $cart_id){
   $sql = "
     DELETE FROM
@@ -101,6 +112,7 @@ function delete_cart($db, $cart_id){
   return execute_query($db, $sql);
 }
 
+// ？？
 function purchase_carts($db, $carts){
   if(validate_cart_purchase($carts) === false){
     return false;
@@ -118,6 +130,7 @@ function purchase_carts($db, $carts){
   delete_user_carts($db, $carts[0]['user_id']);
 }
 
+// 該当するユーザIDの商品をcartsテーブルから削除
 function delete_user_carts($db, $user_id){
   $sql = "
     DELETE FROM
@@ -129,7 +142,7 @@ function delete_user_carts($db, $user_id){
   execute_query($db, $sql);
 }
 
-
+// カート内の値段*数量を計算し、カート全体の合計金額を取得
 function sum_carts($carts){
   $total_price = 0;
   foreach($carts as $cart){
@@ -138,7 +151,9 @@ function sum_carts($carts){
   return $total_price;
 }
 
+// エラーメッセージ　
 function validate_cart_purchase($carts){
+  // $cartsの中身が０ならエラーメッセージとfalseを返す
   if(count($carts) === 0){
     set_error('カートに商品が入っていません。');
     return false;
