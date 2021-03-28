@@ -1,10 +1,11 @@
 <?php
-
+// var_dump用
 function dd($var){
   var_dump($var);
   exit();
 }
 
+// $urlへリダイレクト
 function redirect_to($url){
   header('Location: ' . $url);
   exit;
@@ -17,6 +18,7 @@ function get_get($name){
   return '';
 }
 
+// ??返り値
 function get_post($name){
   if(isset($_POST[$name]) === true){
     return $_POST[$name];
@@ -24,13 +26,16 @@ function get_post($name){
   return '';
 }
 
+
 function get_file($name){
   if(isset($_FILES[$name]) === true){
     return $_FILES[$name];
   };
+  // 空の配列
   return array();
 }
 
+// セッションに渡された値を返す
 function get_session($name){
   if(isset($_SESSION[$name]) === true){
     return $_SESSION[$name];
@@ -38,14 +43,17 @@ function get_session($name){
   return '';
 }
 
+// sessionの値をvalueに渡す
 function set_session($name, $value){
   $_SESSION[$name] = $value;
 }
 
+// sessionの値をerrorに渡す
 function set_error($error){
   $_SESSION['__errors'][] = $error;
 }
 
+// ??
 function get_errors(){
   $errors = get_session('__errors');
   if($errors === ''){
@@ -55,14 +63,17 @@ function get_errors(){
   return $errors;
 }
 
+// エラーがある旨を伝える
 function has_error(){
   return isset($_SESSION['__errors']) && count($_SESSION['__errors']) !== 0;
 }
 
+// messageを配列に格納
 function set_message($message){
   $_SESSION['__messages'][] = $message;
 }
 
+// ??
 function get_messages(){
   $messages = get_session('__messages');
   if($messages === ''){
@@ -72,10 +83,12 @@ function get_messages(){
   return $messages;
 }
 
+// ユーザIDが入力されていることを確認
 function is_logined(){
   return get_session('user_id') !== '';
 }
 
+// 画像ファイルのアップロード　
 function get_upload_filename($file){
   if(is_valid_upload_image($file) === false){
     return '';
@@ -85,13 +98,16 @@ function get_upload_filename($file){
   return get_random_string() . '.' . $ext;
 }
 
+// 一時保存ファイルの値をランダムに取得
 function get_random_string($length = 20){
   return substr(base_convert(hash('sha256', uniqid()), 16, 36), 0, $length);
 }
 
+// ファイル保存場所の変更
 function save_image($image, $filename){
   return move_uploaded_file($image['tmp_name'], IMAGE_DIR . $filename);
 }
+
 
 function delete_image($filename){
   if(file_exists(IMAGE_DIR . $filename) === true){
@@ -103,20 +119,24 @@ function delete_image($filename){
 }
 
 
-
+// 文字列の長さを決める
 function is_valid_length($string, $minimum_length, $maximum_length = PHP_INT_MAX){
+  // 文字列の長さを取得
   $length = mb_strlen($string);
   return ($minimum_length <= $length) && ($length <= $maximum_length);
 }
 
+// 入力形式の正誤確認
 function is_alphanumeric($string){
   return is_valid_format($string, REGEXP_ALPHANUMERIC);
 }
 
+// 入力形式の正誤確認
 function is_positive_integer($string){
   return is_valid_format($string, REGEXP_POSITIVE_INTEGER);
 }
 
+// 入力形式の正誤確認
 function is_valid_format($string, $format){
   return preg_match($format, $string) === 1;
 }

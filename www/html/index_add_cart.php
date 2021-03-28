@@ -14,9 +14,10 @@ if(is_logined() === false){
 $db = get_db_connect();
 $user = get_login_user($db);
 
-
+// idを取得
 $item_id = get_post('item_id');
 
+// 商品追加
 if(add_cart($db,$user['user_id'], $item_id)){
   set_message('カートに商品を追加しました。');
 } else {

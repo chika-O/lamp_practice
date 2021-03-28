@@ -1,14 +1,18 @@
 <?php
+// ファイル読み込み
 require_once '../conf/const.php';
 require_once MODEL_PATH . 'functions.php';
 require_once MODEL_PATH . 'user.php';
 require_once MODEL_PATH . 'item.php';
 
+// セッション開始
 session_start();
 
+// ログインをしていなかったらログインページへ遷移
 if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
+
 
 $db = get_db_connect();
 
@@ -21,6 +25,7 @@ if(is_admin($user) === false){
 $item_id = get_post('item_id');
 $changes_to = get_post('changes_to');
 
+// ステータスの変更
 if($changes_to === 'open'){
   update_item_status($db, $item_id, ITEM_STATUS_OPEN);
   set_message('ステータスを変更しました。');

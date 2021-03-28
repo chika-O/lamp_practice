@@ -4,6 +4,7 @@ require_once MODEL_PATH . 'db.php';
 
 // DB利用
 
+// itemsテーブルからデータ取得
 function get_item($db, $item_id){
   $sql = "
     SELECT
@@ -22,6 +23,7 @@ function get_item($db, $item_id){
   return fetch_query($db, $sql);
 }
 
+// 公開商品の情報を取得　is=open??
 function get_items($db, $is_open = false){
   $sql = '
     SELECT
@@ -43,6 +45,7 @@ function get_items($db, $is_open = false){
   return fetch_all_query($db, $sql);
 }
 
+
 function get_all_items($db){
   return get_items($db);
 }
@@ -51,7 +54,9 @@ function get_open_items($db){
   return get_items($db, true);
 }
 
+// 商品の登録
 function regist_item($db, $name, $price, $stock, $status, $image){
+  // 画像ファイルのアップロード
   $filename = get_upload_filename($image);
   if(validate_item($name, $price, $stock, $filename, $status) === false){
     return false;
@@ -59,6 +64,7 @@ function regist_item($db, $name, $price, $stock, $status, $image){
   return regist_item_transaction($db, $name, $price, $stock, $status, $image, $filename);
 }
 
+// 商品登録
 function regist_item_transaction($db, $name, $price, $stock, $status, $image, $filename){
   $db->beginTransaction();
   if(insert_item($db, $name, $price, $stock, $filename, $status) 
@@ -71,6 +77,7 @@ function regist_item_transaction($db, $name, $price, $stock, $status, $image, $f
   
 }
 
+// 商品の挿入
 function insert_item($db, $name, $price, $stock, $filename, $status){
   $status_value = PERMITTED_ITEM_STATUSES[$status];
   $sql = "
@@ -88,6 +95,7 @@ function insert_item($db, $name, $price, $stock, $filename, $status){
   return execute_query($db, $sql);
 }
 
+// 商品情報の更新
 function update_item_status($db, $item_id, $status){
   $sql = "
     UPDATE
@@ -102,6 +110,7 @@ function update_item_status($db, $item_id, $status){
   return execute_query($db, $sql);
 }
 
+// 在庫の更新
 function update_item_stock($db, $item_id, $stock){
   $sql = "
     UPDATE
@@ -116,6 +125,8 @@ function update_item_stock($db, $item_id, $stock){
   return execute_query($db, $sql);
 }
 
+
+// 商品の削除
 function destroy_item($db, $item_id){
   $item = get_item($db, $item_id);
   if($item === false){
@@ -146,10 +157,12 @@ function delete_item($db, $item_id){
 
 // 非DB
 
+// 商品ステータスを公開にする
 function is_open($item){
   return $item['status'] === 1;
 }
 
+// 商品の各項目のチェック
 function validate_item($name, $price, $stock, $filename, $status){
   $is_valid_item_name = is_valid_item_name($name);
   $is_valid_item_price = is_valid_item_price($price);

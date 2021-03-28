@@ -14,8 +14,10 @@ if(is_logined() === false){
 $db = get_db_connect();
 $user = get_login_user($db);
 
+// カート情報取得
 $cart_id = get_post('cart_id');
 
+// カートから削除
 if(delete_cart($db, $cart_id)){
   set_message('カートを削除しました。');
 } else {
