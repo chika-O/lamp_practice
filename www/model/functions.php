@@ -18,7 +18,7 @@ function get_get($name){
   return '';
 }
 
-// ??返り値
+
 function get_post($name){
   if(isset($_POST[$name]) === true){
     return $_POST[$name];
@@ -31,7 +31,7 @@ function get_file($name){
   if(isset($_FILES[$name]) === true){
     return $_FILES[$name];
   };
-  // 空の配列
+  // 空の配列(↑が配列の形のため、空の配列を返す)
   return array();
 }
 

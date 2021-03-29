@@ -23,7 +23,7 @@ function get_item($db, $item_id){
   return fetch_query($db, $sql);
 }
 
-// 公開商品の情報を取得　is=open??
+// 公開商品の情報を取得　
 function get_items($db, $is_open = false){
   $sql = '
     SELECT
@@ -89,10 +89,12 @@ function insert_item($db, $name, $price, $stock, $filename, $status){
         image,
         status
       )
-    VALUES('{$name}', {$price}, {$stock}, '{$filename}', {$status_value});
+    VALUES(:name, :price, :stock, :filename, :status_value);
   ";
 
-  return execute_query($db, $sql);
+  $params = array(':name' => $name,':price' =>$price,':stock' => $stock,':filename' => $filename,':status_value' => $status_value);
+
+  return execute_query($db, $sql, $params);
 }
 
 // 商品情報の更新
@@ -101,13 +103,15 @@ function update_item_status($db, $item_id, $status){
     UPDATE
       items
     SET
-      status = {$status}
+      status = :status
     WHERE
-      item_id = {$item_id}
+      item_id = :item_id
     LIMIT 1
   ";
+
+  $params = array(':status' => $status,':item_id' => $item_id);
   
-  return execute_query($db, $sql);
+  return execute_query($db, $sql, $params);
 }
 
 // 在庫の更新
@@ -116,13 +120,13 @@ function update_item_stock($db, $item_id, $stock){
     UPDATE
       items
     SET
-      stock = {$stock}
+      stock = :stock
     WHERE
-      item_id = {$item_id}
+      item_id = :item_id
     LIMIT 1
   ";
-  
-  return execute_query($db, $sql);
+  $params = array(':stock' => $stock,':item_id' => $item_id);
+  return execute_query($db, $sql, $params);
 }
 
 
@@ -147,11 +151,12 @@ function delete_item($db, $item_id){
     DELETE FROM
       items
     WHERE
-      item_id = {$item_id}
+      item_id = :item_id
     LIMIT 1
   ";
   
-  return execute_query($db, $sql);
+  $params = array(':item_id' => $item_id);
+  return execute_query($db, $sql, $params);
 }
 
 

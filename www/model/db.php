@@ -40,10 +40,11 @@ function fetch_all_query($db, $sql, $params = array()){
   return false;
 }
 
-// ？？
-function execute_query($db, $sql, $params = array()){
+// sqlの実行処理
+function execute_query($db, $sql,$params = array()){
   try{
     $statement = $db->prepare($sql);
+    
     return $statement->execute($params);
   }catch(PDOException $e){
     set_error('更新に失敗しました。');

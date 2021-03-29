@@ -115,9 +115,10 @@ function insert_user($db, $name, $password){
   $sql = "
     INSERT INTO
       users(name, password)
-    VALUES ('{$name}', '{$password}');
+    VALUES (:name, :password);
   ";
 
-  return execute_query($db, $sql);
+  $params =array(':name' => $name,':password' => $password);
+  return execute_query($db, $sql, $password);
 }
 
