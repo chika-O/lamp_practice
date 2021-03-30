@@ -17,10 +17,11 @@ function get_item($db, $item_id){
     FROM
       items
     WHERE
-      item_id = {$item_id}
+      item_id = :item_id
   ";
 
-  return fetch_query($db, $sql);
+  $params = array(':item_id' => $item_id);
+  return fetch_query($db, $sql,$params);
 }
 
 // 公開商品の情報を取得　

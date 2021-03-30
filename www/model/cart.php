@@ -23,10 +23,12 @@ function get_user_carts($db, $user_id){
     ON
       carts.item_id = items.item_id
     WHERE
-      carts.user_id = {$user_id}
+      carts.user_id = :user_id
   ";
+
+  $params = array(':user_id' => $user_id);
   // ここに引数を渡して取得
-  return fetch_all_query($db, $sql);
+  return fetch_all_query($db, $sql,$params);
 }
 
 // cartsテーブルとitemsテーブルを結合、ユーザidとアイテムidが一致する商品情報を取得
