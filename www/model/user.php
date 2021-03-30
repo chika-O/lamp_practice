@@ -13,11 +13,12 @@ function get_user($db, $user_id){
     FROM
       users
     WHERE
-      user_id = {$user_id}
+      user_id = :user_id
     LIMIT 1
   ";
+  $params = array(':user_id' => $user_id);
 
-  return fetch_query($db, $sql);
+  return fetch_query($db, $sql,$params);
 }
 
 // ユーザ情報の取得（名前から）
@@ -31,11 +32,13 @@ function get_user_by_name($db, $name){
     FROM
       users
     WHERE
-      name = '{$name}'
+      name = :name
     LIMIT 1
   ";
 
-  return fetch_query($db, $sql);
+  $params = array(':name' => $name);
+
+  return fetch_query($db, $sql,$params);
 }
 
 // ログイン
@@ -66,7 +69,6 @@ function regist_user($db, $name, $password, $password_confirmation) {
   return insert_user($db, $name, $password);
 }
 
-// ??
 function is_admin($user){
   return $user['type'] === USER_TYPE_ADMIN;
 }
@@ -77,7 +79,6 @@ function is_valid_user($name, $password, $password_confirmation){
   $is_valid_user_name = is_valid_user_name($name);
   $is_valid_password = is_valid_password($password, $password_confirmation);
   return $is_valid_user_name && $is_valid_password ;
-  // ??
 }
 
 // ユーザ名とパスワードの形式確認
@@ -115,9 +116,10 @@ function insert_user($db, $name, $password){
   $sql = "
     INSERT INTO
       users(name, password)
-    VALUES ('{$name}', '{$password}');
+    VALUES (:name, :password);
   ";
 
-  return execute_query($db, $sql);
+  $params =array(':name' => $name,':password' => $password);
+  return execute_query($db, $sql, $password);
 }
 
