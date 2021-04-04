@@ -12,14 +12,13 @@ if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
 
-$token = get_random_string(30);
+// tokenの受け取り
+$token = $_POST['token'];
 
-get_csrf_token($token);
-
+// tokenの照合
 if (is_valid_csrf_token($token) === false) {
   redirect_to(LOGIN_URL);
 }
-
 
 // DB接続
 $db = get_db_connect();

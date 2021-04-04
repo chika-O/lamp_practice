@@ -161,9 +161,9 @@ function h($str){
 }
 
 // トークンの生成
-function get_csrf_token($token) {
+function get_csrf_token() {
   // トークンにランダムな文字列をセット
-  // $token = get_random_string(30);
+  $token = get_random_string(30);
   // セッションに保存
   set_session('csrf_token',$token);
   return $token;
