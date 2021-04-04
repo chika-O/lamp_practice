@@ -12,6 +12,15 @@ if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
 
+$token = get_random_string(30);
+
+get_csrf_token($token);
+
+if (is_valid_csrf_token($token) === false) {
+  redirect_to(LOGIN_URL);
+}
+
+
 // DB接続
 $db = get_db_connect();
 $user = get_login_user($db);
