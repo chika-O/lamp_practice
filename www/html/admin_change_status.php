@@ -13,6 +13,14 @@ if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
 
+// tokenの受け取り
+$token = $_POST['token'];
+
+// tokenの照合
+if (is_valid_csrf_token($token) === false) {
+  redirect_to(LOGIN_URL);
+}
+
 
 $db = get_db_connect();
 

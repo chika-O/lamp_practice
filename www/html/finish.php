@@ -11,6 +11,9 @@ session_start();
 if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
+
+$token = get_csrf_token();
+
 // DB接続、ユーザidからデータ取得
 $db = get_db_connect();
 $user = get_login_user($db);

@@ -53,7 +53,7 @@ function set_error($error){
   $_SESSION['__errors'][] = $error;
 }
 
-// ??
+
 function get_errors(){
   $errors = get_session('__errors');
   if($errors === ''){
@@ -84,6 +84,7 @@ function get_messages(){
 }
 
 // ユーザIDが入力されていることを確認
+// セッションにユーザidが入っていることを返す
 function is_logined(){
   return get_session('user_id') !== '';
 }
@@ -98,7 +99,7 @@ function get_upload_filename($file){
   return get_random_string() . '.' . $ext;
 }
 
-// 一時保存ファイルの値をランダムに取得
+// ランダムな文字列を取得
 function get_random_string($length = 20){
   return substr(base_convert(hash('sha256', uniqid()), 16, 36), 0, $length);
 }
@@ -159,3 +160,19 @@ function h($str){
   return htmlspecialchars($str,ENT_QUOTES,'UTF-8');
 }
 
+// トークンの生成
+function get_csrf_token() {
+  // トークンにランダムな文字列をセット
+  $token = get_random_string(30);
+  // セッションに保存
+  set_session('csrf_token',$token);
+  return $token;
+}
+
+// トークンの確認
+function is_valid_csrf_token($token){
+  if($token === '') {
+    return false;
+  }
+  return $token === get_session('csrf_token');
+}
