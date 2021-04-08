@@ -16,6 +16,7 @@ $token = $_POST['token'];
 
 // tokenの照合
 if (is_valid_csrf_token($token) === false) {
+  set_error('不正なアクセスです');
   redirect_to(LOGIN_URL);
 }
 
