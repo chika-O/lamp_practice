@@ -27,6 +27,7 @@ if(purchase_carts($db, $carts) === false){
   redirect_to(CART_URL);
 } 
 
+// 合計購入金額の算出
 $total_price = sum_carts($carts);
 
 include_once '../view/finish_view.php';

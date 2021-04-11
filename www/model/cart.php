@@ -117,11 +117,16 @@ function delete_cart($db, $cart_id){
   return execute_query($db, $sql, $params);
 }
 
-
+// 購入処理
 function purchase_carts($db, $carts){
+  // 正常に購入できる状態かどうかをチェック
   if(validate_cart_purchase($carts) === false){
     return false;
   }
+  $db->beginTransaction();
+
+
+  // amount分を在庫から削除する
   foreach($carts as $cart){
     if(update_item_stock(
         $db, 
@@ -131,8 +136,23 @@ function purchase_carts($db, $carts){
       set_error($cart['name'] . 'の購入に失敗しました。');
     }
   }
-  
+  // 該当ユーザのカート情報を削除
   delete_user_carts($db, $carts[0]['user_id']);
+
+  //追加テーブルへのデータ書き込み
+  if (regist_purchase_histories($db,$carts) === true){
+    $purchase_id = $db->lastInsertId();
+    regist_purchase_details($db,$carts,$purchase_id);
+  }
+  
+
+  //set_errorされたかをを判別
+  if(has_error() === false){
+    $db->commit();
+  }else {
+    $db->rollback();
+    return false;
+  }
 }
 
 // 該当するユーザIDの商品をcartsテーブルから削除
@@ -148,6 +168,47 @@ function delete_user_carts($db, $user_id){
 
   execute_query($db, $sql, $params);
 }
+
+//purchase_historiesの更新
+function regist_purchase_histories($db,$carts){
+    $sql = "
+      INSERT INTO
+        purchase_histories(
+          user_id
+        )VALUES(
+          :user_id
+        )
+    ";
+    $params = array(':user_id' => $carts[0]['user_id']);
+    return execute_query($db, $sql, $params);
+
+  }
+
+  //purchase_detailsの更新
+  function regist_purchase_details($db,$carts,$purchase_id){
+    foreach ($carts as $cart) {
+      $sql = "
+        INSERT INTO
+          purchase_details(
+            purchase_id,
+            item_id,
+            purchase_price,
+            purchase_amount
+          )VALUES(
+            :purchase_id,
+            :item_id,
+            :purchase_price,
+            :purchase_amount
+          )
+      ";
+    
+      $params = array(':purchase_id' => $purchase_id,':item_id' => $cart['item_id'],':purchase_price' =>$cart['price'],':purchase_amount' => $cart['amount']);
+      execute_query($db, $sql, $params);
+    }
+  }
+
+
+    
 
 // カート内の値段*数量を計算し、カート全体の合計金額を取得
 function sum_carts($carts){
