@@ -53,7 +53,7 @@ function set_error($error){
   $_SESSION['__errors'][] = $error;
 }
 
-
+// エラーを全て表示する
 function get_errors(){
   $errors = get_session('__errors');
   if($errors === ''){
@@ -176,3 +176,5 @@ function is_valid_csrf_token($token){
   }
   return $token === get_session('csrf_token');
 }
+
+
