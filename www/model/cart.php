@@ -139,7 +139,7 @@ function purchase_carts($db, $carts){
   // 該当ユーザのカート情報を削除
   delete_user_carts($db, $carts[0]['user_id']);
 
-  //追加テーブルへのデータ書き込み
+  //追加テーブルへのデータ書き込み　historiesが正常に動作したら
   if (regist_purchase_histories($db,$carts) === true){
     $purchase_id = $db->lastInsertId();
     regist_purchase_details($db,$carts,$purchase_id);
@@ -240,3 +240,102 @@ function validate_cart_purchase($carts){
   return true;
 }
 
+// purchase_historiesの情報取得
+function get_purchase_information($db, $user){
+  if(is_admin($user) === false){
+    $sql = "
+    SELECT
+      purchase_histories.purchase_id,
+      purchase_histories.user_id,
+      purchase_histories.purchase_datetime,
+      SUM(purchase_details.purchase_price*purchase_details.purchase_amount)
+      AS total_amount
+    FROM
+      purchase_histories
+    JOIN
+      purchase_details
+    ON
+      purchase_histories.purchase_id = purchase_details.purchase_id
+    WHERE
+      purchase_histories.user_id = :user_id
+    GROUP BY
+      purchase_histories.purchase_id
+  ";
+
+  $params = array(':user_id' => $user['user_id']);
+  // ここに引数を渡して取得
+  // 管理者がログインした場合
+  }else {
+    $sql = "
+    SELECT
+      purchase_histories.purchase_id,
+      purchase_histories.user_id,
+      purchase_histories.purchase_datetime,
+      SUM(purchase_details.purchase_price*purchase_details.purchase_amount)
+      AS total_amount
+    FROM
+      purchase_histories
+    JOIN
+      purchase_details
+    ON
+      purchase_histories.purchase_id = purchase_details.purchase_id
+    GROUP BY
+      purchase_histories.purchase_id
+  ";
+
+  $params = array();
+  }
+
+  return fetch_all_query($db, $sql,$params);  
+}
+
+function get_purchase_history($db, $purchase_id){
+
+  $sql = "
+  SELECT
+    purchase_histories.purchase_id,
+    purchase_histories.user_id,
+    purchase_histories.purchase_datetime,
+    SUM(purchase_details.purchase_price*purchase_details.purchase_amount)
+    AS total_amount
+  FROM
+    purchase_histories
+  JOIN
+    purchase_details
+  ON
+    purchase_histories.purchase_id = purchase_details.purchase_id
+  WHERE
+    purchase_histories.purchase_id = :purchase_id
+  GROUP BY
+    purchase_histories.purchase_id
+";
+
+$params = array(':purchase_id' => $purchase_id);
+
+
+return fetch_all_query($db, $sql,$params);  
+}
+
+//purchase_details・itemsの取得
+function get_purchase_details($db,$purchase_id) {
+  $sql="
+  SELECT
+    purchase_details.purchase_id,
+    purchase_details.purchase_price,
+    purchase_details.purchase_amount,
+    items.name
+  FROM
+    purchase_details
+  JOIN
+    items
+  ON
+    purchase_details.item_id = items.item_id
+  WHERE
+    purchase_details.purchase_id = :purchase_id
+  ";
+
+  $params = array(':purchase_id' => $purchase_id);
+
+  return fetch_all_query($db, $sql,$params);  
+
+}
