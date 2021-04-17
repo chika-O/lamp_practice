@@ -26,7 +26,7 @@ $data = get_purchase_history($db,$purchase_id);
 // dd($data);
 
 // adminのチェック
-if(($data['user_id'] !== $user['user_id']) && (is_admin($user) === false)) {
+if(($data[0]['user_id'] !== $user['user_id']) && (is_admin($user) === false)) {
   redirect_to(LOGIN_URL);
 }
 

@@ -5,6 +5,7 @@
     <title>購入明細</title>
 </head>
 <body>
+<?php include VIEW_PATH . 'templates/header_logined.php'; ?>
 <table border=1>
     <tr>
         <th>注文番号</th>

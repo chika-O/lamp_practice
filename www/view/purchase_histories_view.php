@@ -21,6 +21,7 @@
     </style>
 </head>
 <body>
+<?php include VIEW_PATH . 'templates/header_logined.php'; ?>
     <h2>購入履歴</h2>
     <table border=1>
         <tr>
