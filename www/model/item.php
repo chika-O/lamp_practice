@@ -25,21 +25,40 @@ function get_item($db, $item_id){
 }
 
 // 公開商品の情報を取得　
-function get_items($db, $is_open = false){
-  $sql = '
-    SELECT
-      item_id, 
-      name,
-      stock,
-      price,
-      image,
-      status
-    FROM
-      items
-  ';
-  if($is_open === true){
-    $sql .= '
-      WHERE status = 1
+function get_items($db, $is_open = false,$order = 'newest'){
+      $sql = '
+        SELECT
+          item_id, 
+          name,
+          stock,
+          price,
+          image,
+          status
+        FROM
+          items
+      ';
+      if($is_open === true){
+        $sql .= '
+          WHERE status = 1
+        ';
+
+    }
+  if($order === 'cheapest'){
+        $sql.='
+        ORDER BY
+          price ASC
+        ';
+
+  }else if($order === 'highest'){
+        $sql.='
+        ORDER BY
+          price DESC
+        ';
+        
+  } else {
+    $sql.='
+    ORDER BY
+      item_id DESC
     ';
   }
 
@@ -47,12 +66,13 @@ function get_items($db, $is_open = false){
 }
 
 
+
 function get_all_items($db){
   return get_items($db);
 }
 
-function get_open_items($db){
-  return get_items($db, true);
+function get_open_items($db,$order){
+  return get_items($db, true,$order);
 }
 
 // 商品の登録

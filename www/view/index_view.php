@@ -11,6 +11,14 @@
   
 
   <div class="container">
+    <form method="get" action="index.php" class="float-right test-box">
+      <select name="order">
+      <option value="newest" selected>新着順</option>
+      <option value="cheapest">価格が安い順</option>
+      <option value="highest">価格が高い順</option>
+      </select>
+      <input type="submit">
+    </form>
     <h1>商品一覧</h1>
     <?php include VIEW_PATH . 'templates/messages.php'; ?>
 
